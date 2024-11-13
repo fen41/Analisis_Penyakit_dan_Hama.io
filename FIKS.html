@@ -1,0 +1,302 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identifikasi Penyakit Tanaman Cabai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <style>
+        body {
+            background-image: url('https://cvpradiptaparamita.com/wp-content/uploads/2023/01/609faf35be344.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        .loader {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center p-5 bg-teal-100 bg-opacity-50">
+    <nav class="w-full bg-teal-700 p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-white text-2xl font-bold">Penyakit Cabai</a>
+            <ul class="flex space-x-4">
+                <li><a href="#" class="text-white hover:text-gray-300" onclick="showHome()">Home</a></li>
+                <li><a href="#" class="text-white hover:text-gray-300" onclick="showAbout()">About</a></li>
+                <li><a href="#" class="text-white hover:text-gray-300" onclick="showContact()">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <h1 class="text-4xl text-white mb-5 shadow-lg text-center">Identifikasi Penyakit Tanaman Cabai</h1>
+    
+    <div class="input-container flex flex-col items-center p-5 bg-white bg-opacity-80 rounded-lg shadow-lg w-full max-w-md" id="homeContainer">
+        <p class="mb-3">Pilih jenis analisis:</p>
+        <div class="flex space-x-4 mb-3">
+            <button onclick="showPenyakitForm()" class="p-3 bg-teal-700 text-white text-lg rounded hover:bg-teal-900 transition duration-300">Analisis Penyakit</button>
+            <button onclick="showHamaForm()" class="p-3 bg-teal-700 text-white text-lg rounded hover:bg-teal-900 transition duration-300">Analisis Hama</button>
+        </div>
+        <div id="penyakitForm" class="w-full" style="display:none;">
+            <p class="mb-3">Masukkan gejala atau ciri-ciri penyakit tanaman cabai:</p>
+            <input type="text" id="gejalaInput" placeholder="Contoh: bercak hitam pada buah" class="p-3 w-full text-lg mb-3 rounded border border-teal-700 outline-none">
+            <button onclick="cariPenyakit()" class="p-3 bg-teal-700 text-white text-lg rounded hover:bg-teal-900 transition duration-300">Cari Penyakit</button>
+        </div>
+        <div id="hamaForm" class="w-full" style="display:none;">
+            <p class="mb-3">Masukkan gejala atau ciri-ciri hama pada tanaman cabai:</p>
+            <input type="text" id="gejalaHamaInput" placeholder="Contoh: daun menguning dan kering" class="p-3 w-full text-lg mb-3 rounded border border-teal-700 outline-none">
+            <button onclick="cariHama()" class="p-3 bg-teal-700 text-white text-lg rounded hover:bg-teal-900 transition duration-300">Cari Hama</button>
+        </div>
+    </div>
+
+    <div class="loader-container flex justify-center items-center mt-5" id="loaderContainer" style="display:none;">
+        <div class="loader"></div>
+    </div>
+
+    <div class="result-container w-full max-w-2xl mt-5 p-5 bg-white bg-opacity-80 rounded-lg shadow-lg" id="resultContainer" style="display:none;">
+        <h3 class="text-2xl mb-3">Hasil Identifikasi:</h3>
+        <input type="text" id="searchPenyakit" placeholder="Cari penyakit..." class="p-3 w-full text-lg mb-3 rounded border border-teal-700 outline-none" onkeyup="filterPenyakit()">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th class="p-3 bg-teal-700 text-white">Nama Penyakit/Hama</th>
+                        <th class="p-3 bg-teal-700 text-white">Penyebab</th>
+                        <th class="p-3 bg-teal-700 text-white">Gejala</th>
+                        <th class="p-3 bg-teal-700 text-white">Solusi Pengendalian</th>
+                    </tr>
+                </thead>
+                <tbody id="hasilBody">
+                </tbody>
+            </table>
+        </div>
+        <p id="noResultMessage" class="text-red-700 font-bold mt-3" style="display:none;">Penyakit atau hama tidak ditemukan berdasarkan gejala yang diinput.</p>
+    </div>
+
+    <div class="about-container w-full max-w-2xl mt-5 p-5 bg-white bg-opacity-80 rounded-lg shadow-lg" id="aboutContainer" style="display:none;">
+        <h3 class="text-2xl mb-3">Tentang Aplikasi</h3>
+        <p>Aplikasi ini dirancang untuk membantu petani dan pecinta tanaman dalam mengidentifikasi penyakit dan hama pada tanaman cabai berdasarkan gejala yang terlihat. Dengan memasukkan gejala yang diamati, aplikasi ini akan memberikan informasi tentang kemungkinan penyakit atau hama, penyebabnya, dan solusi pengendalian yang dapat dilakukan.</p>
+    </div>
+
+    <div class="contact-container w-full max-w-2xl mt-5 p-5 bg-white bg-opacity-80 rounded-lg shadow-lg" id="contactContainer" style="display:none;">
+        <h3 class="text-2xl mb-3">Kontak</h3>
+        <p>Untuk informasi lebih lanjut, hubungi:</p>
+        <p>Nomor WhatsApp: <a href="https://wa.me/6283867171010" class="text-teal-700 hover:underline">083867171010 (Feni)</a></p>
+    </div>
+
+    <script>
+        const penyakitCabai = [
+            {
+                nama: "Anthracnose (Patek)",
+                penyebab: "Jamur Colletotrichum capsici",
+                gejala: "Bercak hitam melingkar pada buah yang cekung.",
+                solusi: "Gunakan fungisida berbahan mancozeb atau chlorothalonil."
+            },
+            {
+                nama: "Virus Mosaik",
+                penyebab: "Cucumber Mosaic Virus (CMV) atau Tobacco Mosaic Virus (TMV)",
+                gejala: "Daun keriting dengan warna belang hijau tua dan muda.",
+                solusi: "Kendalikan kutu daun, sanitasi lingkungan tanaman."
+            },
+            {
+                nama: "Layu Fusarium",
+                penyebab: "Jamur Fusarium oxysporum",
+                gejala: "Tanaman layu dan pangkal batang coklat.",
+                solusi: "Gunakan varietas tahan layu dan pengendalian kelembapan tanah."
+            },
+            {
+                nama: "Busuk Akar dan Pangkal Batang",
+                penyebab: "Jamur Phytophthora capsici",
+                gejala: "Pangkal batang menghitam dan membusuk, buah rontok sebelum matang.",
+                solusi: "Atur drainase tanah dan gunakan fungisida metalaksil."
+            },
+            {
+                nama: "Layu Bakteri",
+                penyebab: "Bakteri Ralstonia solanacearum",
+                gejala: "Daun layu tiba-tiba meskipun tanaman masih hijau segar.",
+                solusi: "Gunakan varietas tahan bakteri dan sanitasi lahan."
+            }
+        ];
+
+        const hamaCabai = [
+            {
+                nama: "Kutu Daun (Aphids)",
+                penyebab: "Kutu Daun",
+                gejala: "Daun cabai menguning, kering, dan mengalami deformasi akibat penghisapan cairan dari tanaman. Kutu daun juga dapat mengeluarkan embun madu yang menarik jamur jelaga.",
+                solusi: "Gunakan sabun insektisida atau neem oil untuk mengendalikan populasi kutu daun. Lakukan pembersihan daun secara rutin dan buang daun yang terinfeksi. Pasang perangkap likat kuning untuk menarik dan membunuh kutu."
+            },
+            {
+                nama: "Ulat Grayak (Spodoptera exigua)",
+                penyebab: "Ulat Grayak",
+                gejala: "Muncul lubang-lubang pada daun dan buah cabai, serta dapat menyebabkan kerusakan serius pada tanaman muda.",
+                solusi: "Semprotkan insektisida seperti Turex WP atau Direct 25EC dengan konsentrasi yang dianjurkan (0,25-0,5 gram per liter air) untuk membasmi ulat. Lakukan pengamatan rutin untuk deteksi dini dan segera ambil tindakan jika terlihat gejala serangan."
+            },
+            {
+                nama: "Tungau (Spider Mites)",
+                penyebab: "Tungau",
+                gejala: "Daun cabai berwarna kemerahan, menggulung ke atas, dan akhirnya rontok.",
+                solusi: "Semprotkan akarisida seperti Samite 135EC dengan konsentrasi 0,25 hingga 0,5 ml per liter air. Gunakan metode pembersihan dengan air bertekanan tinggi untuk menghilangkan tungau yang menempel pada daun."
+            },
+            {
+                nama: "Lalat Buah (Bactrocera sp.)",
+                penyebab: "Lalat Buah",
+                gejala: "Buah cabai menunjukkan lubang kecil, kulit buah menguning, dan biji berwarna cokelat kehitaman.",
+                solusi: "Gunakan perangkap berbasis feromon untuk menarik lalat buah. Semprotkan insektisida seperti Winder 100EC atau Promectin 18EC sesuai dosis yang dianjurkan."
+            },
+            {
+                nama: "Nematoda",
+                penyebab: "Nematoda",
+                gejala: "Kerusakan pada akar yang menghambat penyerapan nutrisi dan menyebabkan pertumbuhan tanaman terhambat.",
+                solusi: "Tanam varietas cabai yang tahan terhadap nematoda dan lakukan rotasi tanaman. Pemberian nematisida bersamaan dengan pemupukan jika lahan terinfeksi parah."
+            }
+        ];
+
+        function showHome() {
+            document.getElementById("homeContainer").style.display = "block";
+            document.getElementById("penyakitForm").style.display = "none";
+            document.getElementById("hamaForm").style.display = "none";
+            document.getElementById("resultContainer").style.display = "none";
+            document.getElementById("aboutContainer").style.display = "none";
+            document.getElementById("contactContainer").style.display = "none";
+        }
+
+        function showPenyakitForm() {
+            document.getElementById("penyakitForm").style.display = "block";
+            document.getElementById("hamaForm").style.display = "none";
+        }
+
+        function showHamaForm() {
+            document.getElementById("penyakitForm").style.display = "none";
+            document.getElementById("hamaForm").style.display = "block";
+        }
+
+        function cariPenyakit() {
+            const gejalaInput = document.getElementById("gejalaInput").value.toLowerCase();
+            const hasilBody = document.getElementById("hasilBody");
+            const noResultMessage = document.getElementById("noResultMessage");
+            const resultContainer = document.getElementById("resultContainer");
+            const loaderContainer = document.getElementById("loaderContainer");
+            const aboutContainer = document.getElementById("aboutContainer");
+            const contactContainer = document.getElementById("contactContainer");
+            hasilBody.innerHTML = "";
+
+            loaderContainer.style.display = "flex";
+            resultContainer.style.display = "none";
+            noResultMessage.style.display = "none";
+            aboutContainer.style.display = "none";
+            contactContainer.style.display = "none";
+
+            setTimeout(() => {
+                const hasilPenyakit = penyakitCabai.filter(penyakit => 
+                    penyakit.gejala.toLowerCase().includes(gejalaInput)
+                );
+
+                loaderContainer.style.display = "none";
+
+                if (hasilPenyakit.length > 0) {
+                    resultContainer.style.display = "block";
+                    noResultMessage.style.display = "none";
+                    hasilPenyakit.forEach(penyakit => {
+                        const row = `<tr>
+                            <td class="p-3 border">${penyakit.nama}</td>
+                            <td class="p-3 border">${penyakit.penyebab}</td>
+                            <td class="p-3 border">${penyakit.gejala}</td>
+                            <td class="p-3 border">${penyakit.solusi}</td>
+                        </tr>`;
+                        hasilBody.insertAdjacentHTML("beforeend", row);
+                    });
+                } else {
+                    resultContainer.style.display = "block";
+                    noResultMessage.style.display = "block";
+                }
+            }, 2000); // Simulate a 2-second loading time
+        }
+
+        function cariHama() {
+            const gejalaInput = document.getElementById("gejalaHamaInput").value.toLowerCase();
+            const hasilBody = document.getElementById("hasilBody");
+            const noResultMessage = document.getElementById("noResultMessage");
+            const resultContainer = document.getElementById("resultContainer");
+            const loaderContainer = document.getElementById("loaderContainer");
+            const aboutContainer = document.getElementById("aboutContainer");
+            const contactContainer = document.getElementById("contactContainer");
+            hasilBody.innerHTML = "";
+
+            loaderContainer.style.display = "flex";
+            resultContainer.style.display = "none";
+            noResultMessage.style.display = "none";
+            aboutContainer.style.display = "none";
+            contactContainer.style.display = "none";
+
+            setTimeout(() => {
+                const hasilHama = hamaCabai.filter(hama => 
+                    hama.gejala.toLowerCase().includes(gejalaInput)
+                );
+
+                loaderContainer.style.display = "none";
+
+                if (hasilHama.length > 0) {
+                    resultContainer.style.display = "block";
+                    noResultMessage.style.display = "none";
+                    hasilHama.forEach(hama => {
+                        const row = `<tr>
+                            <td class="p-3 border">${hama.nama}</td>
+                            <td class="p-3 border">${hama.penyebab}</td>
+                            <td class="p-3 border">${hama.gejala}</td>
+                            <td class="p-3 border">${hama.solusi}</td>
+                        </tr>`;
+                        hasilBody.insertAdjacentHTML("beforeend", row);
+                    });
+                } else {
+                    resultContainer.style.display = "block";
+                    noResultMessage.style.display = "block";
+                }
+            }, 2000); // Simulate a 2-second loading time
+        }
+
+        function filterPenyakit() {
+            const searchInput = document.getElementById("searchPenyakit").value.toLowerCase();
+            const rows = document.querySelectorAll("#hasilBody tr");
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(searchInput));
+                row.style.display = match ? "" : "none";
+            });
+        }
+
+        function showAbout() {
+            const aboutContainer = document.getElementById("aboutContainer");
+            const resultContainer = document.getElementById("resultContainer");
+            const loaderContainer = document.getElementById("loaderContainer");
+            const contactContainer = document.getElementById("contactContainer");
+            const homeContainer = document.getElementById("homeContainer");
+            aboutContainer.style.display = "block";
+            resultContainer.style.display = "none";
+            loaderContainer.style.display = "none";
+            contactContainer.style.display = "none";
+            homeContainer.style.display = "none";
+        }
+
+        function showContact() {
+            const contactContainer = document.getElementById("contactContainer");
+            const resultContainer = document.getElementById("resultContainer");
+            const loaderContainer = document.getElementById("loaderContainer");
+            const aboutContainer = document.getElementById("aboutContainer");
+            const homeContainer = document.getElementById("homeContainer");
+            contactContainer.style.display = "block";
+            resultContainer.style.display = "none";
+            loaderContainer.style.display = "none";
+            aboutContainer.style.display = "none";
+            homeContainer.style.display = "none";
+        }
+    </script>
+</body>
+</html>
